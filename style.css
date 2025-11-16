@@ -12,4 +12,7 @@ body {
     border: 5px solid #333; 
     background-color: #4CAF50; /* Il campo da gioco verde */
     display: block; /* Rimuove lo spazio extra sotto il canvas */
+    /* Previene tutti i gesti touch predefiniti del browser, 
+       inclusi il pinch-to-zoom e il double-tap zoom. */
+    touch-action: none; 
 }
