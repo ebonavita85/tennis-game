@@ -1,0 +1,15 @@
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    background-color: #f0f0f0;
+}
+
+#gameCanvas {
+    /* Un bordo per distinguere l'area di gioco */
+    border: 5px solid #333; 
+    background-color: #4CAF50; /* Il campo da gioco verde */
+    display: block; /* Rimuove lo spazio extra sotto il canvas */
+}
