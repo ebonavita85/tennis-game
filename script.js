@@ -201,33 +201,62 @@ function getCanvasTouchY(touchY) {
     return (clientY / rect.height) * GAME_HEIGHT; // Scala sulla dimensione logica
 }
 
+// ... (Tutto il codice precedente)
+
+// --- ✋ Gestione degli Input Touch (Mobile) e Mouse (Desktop) ---
+
+// Funzione di utilità per normalizzare le coordinate del touch... (Lascia invariata)
+function getCanvasTouchY(touchY) {
+    const rect = canvas.getBoundingClientRect();
+    const clientY = touchY - rect.top;
+    return (clientY / rect.height) * GAME_HEIGHT;
+}
+
+// 1. Aggiungi l'evento touchstart 
+canvas.addEventListener('touchstart', (event) => {
+    // ESSENZIALE: Blocca l'azione predefinita del browser 
+    // all'inizio del tocco. Questo aiuta a prevenire il pull-to-refresh.
+    event.preventDefault(); 
+    
+    // Processa i tocchi iniziali
+    for (let i = 0; i < event.touches.length; i++) {
+        const touch = event.touches[i];
+        const touchY = getCanvasTouchY(touch.clientY);
+
+        // (Opzionale, ma buona pratica): Imposta la posizione iniziale
+        if (touch.clientX < canvas.width / 2) {
+            touchY1 = touchY;
+        } else {
+            touchY2 = touchY;
+        }
+    }
+}, { passive: false }); // { passive: false } è cruciale per far funzionare preventDefault
+
+canvas.addEventListener('touchmove', (event) => {
+    // 2. Mantieni preventDefault anche su touchmove
+    event.preventDefault(); 
+    
+    for (let i = 0; i < event.touches.length; i++) {
+        const touch = event.touches[i];
+        const touchY = getCanvasTouchY(touch.clientY);
+
+        if (touch.clientX < canvas.width / 2) {
+            touchY1 = touchY;
+        } else {
+            touchY2 = touchY;
+        }
+    }
+}, { passive: false }); // { passive: false } è cruciale qui
+
+// Rimuovi l'event listener 'mousemove' se vuoi un controllo touch puro,
+// altrimenti lascialo per la compatibilità desktop.
+
 canvas.addEventListener('mousemove', (event) => {
     // Se non ci sono touch attivi, usa il mouse per controllare P1
     if (event.clientX < canvas.width / 2) {
         touchY1 = getCanvasTouchY(event.clientY);
     }
 });
-
-canvas.addEventListener('touchmove', (event) => {
-    event.preventDefault(); // Previene lo scrolling della pagina durante il gioco
-    
-    // Gestisce tutti i touchpoints attivi
-    for (let i = 0; i < event.touches.length; i++) {
-        const touch = event.touches[i];
-        const touchX = getCanvasTouchY(touch.clientX); // Posizione X normalizzata
-        const touchY = getCanvasTouchY(touch.clientY); // Posizione Y normalizzata
-
-        // Area di controllo: P1 (metà sinistra del campo)
-        if (touch.clientX < canvas.width / 2) {
-            touchY1 = touchY;
-        } 
-        // Area di controllo: P2 (metà destra del campo)
-        else {
-            touchY2 = touchY;
-        }
-    }
-}, false); // 'false' è importante per prevenire problemi di performance
-
 
 // --- 🏁 Avvia il Gioco ---
 gameLoop();
